@@ -21,7 +21,7 @@ COPY . .
 
 RUN pip install -r requirements.txt
 
-RUN python -c "from faster_whisper import download_model; download_model('large-v3', device='cuda', compute_type='float16')"
+RUN python -c "from faster_whisper import download_model; download_model('large-v3', compute_type='float16')"
 
 # Install FFmpeg
 RUN apt install -y ffmpeg
