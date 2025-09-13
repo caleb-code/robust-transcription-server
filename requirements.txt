@@ -1,0 +1,4 @@
+faster_whisper
+numpy
+quart
+boto3
