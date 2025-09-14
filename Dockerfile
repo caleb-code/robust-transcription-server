@@ -1,4 +1,4 @@
-FROM pytorch/pytorch:2.8.0-cuda12.9-cudnn9-devel
+FROM pytorch/pytorch:2.8.0-cuda12.9-cudnn9-runtime
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
         python3 \
@@ -41,11 +41,24 @@ RUN cd nginx-1.28.0 && ./configure --with-http_ssl_module --add-module=../nginx-
 
 COPY nginx.conf /usr/local/nginx/conf/nginx.conf
 
+# Add NVIDIA apt repo
+RUN apt-get update && apt-get install -y wget gnupg \
+    && wget -qO - https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2404/x86_64/3bf863cc.pub | apt-key add - \
+    && echo "deb https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2404/x86_64/ /" > /etc/apt/sources.list.d/cuda.list
+
+# Install cuDNN
+RUN apt-get update && apt-get install -y --no-install-recommends \
+        libcudnn9=9.* \
+        libcudnn9-dev=9.* \
+    && rm -rf /var/lib/apt/lists/*
+
+RUN apt install s3fs
+RUN echo "*******REMOVED*******:*******REMOVED*******" > /passwd_file
+RUN chmod 600 /passwd_file
+RUN s3fs configs-transcription /configs -o passwd_file=/passwd_file
+
 # Expose the RTMP port
 EXPOSE 1935
-
-# Start Nginx
-RUN /usr/local/nginx/sbin/nginx
 
 # Start the Python application and Nginx server
 CMD ["sh", "-c", "/usr/local/nginx/sbin/nginx && python main.py"]
