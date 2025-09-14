@@ -2,3 +2,4 @@ faster_whisper
 numpy
 quart
 boto3
+ctranslate2==4.4.0

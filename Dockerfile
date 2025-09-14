@@ -41,22 +41,14 @@ RUN cd nginx-1.28.0 && ./configure --with-http_ssl_module --add-module=../nginx-
 
 COPY nginx.conf /usr/local/nginx/conf/nginx.conf
 
-# Set cuDNN version for CUDA 12.9
-ENV CUDNN_VERSION=9.3.2.105
-
-# Download cuDNN for Linux x86_64 CUDA 12.9
-RUN wget https://developer.download.nvidia.com/compute/redist/cudnn/v9.3.2/cudnn-local-repo-ubuntu2404-9.3.2.105_1.0-1_amd64.deb \
-    && dpkg -i cudnn-local-repo-ubuntu2404-9.3.2.105_1.0-1_amd64.deb \
-    && apt-key add /var/cudnn-local-repo-*/7fa2af80.pub \
-    && apt-get update \
-    && apt-get install -y --no-install-recommends libcudnn9 libcudnn9-dev \
-    && rm -rf /var/lib/apt/lists/* cudnn-local-repo-ubuntu2404-9.3.2.105_1.0-1_amd64.deb
 
 # Install s3fs to mount S3 bucket
 RUN apt update
 RUN apt install s3fs
 RUN echo "*******REMOVED*******:*******REMOVED*******" > /passwd_file
 RUN chmod 600 /passwd_file
+RUN mkdir /configs
+# Mount the S3 bucket (replace 'your-bucket-name' with your actual bucket name
 RUN s3fs configs-transcription /configs -o passwd_file=/passwd_file
 
 # Expose the RTMP port
