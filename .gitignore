@@ -4,3 +4,5 @@
 /output.mp4
 /test_aiortc.py
 /.gitignore
+/.vscode
+/.dockerignore
