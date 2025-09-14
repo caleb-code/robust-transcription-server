@@ -21,7 +21,7 @@ COPY . .
 
 RUN pip install -r requirements.txt
 
-RUN python -c "from faster_whisper import download_model; download_model('large-v3', compute_type='float16')"
+RUN python -c "from faster_whisper import download_model; download_model('large-v3')"
 
 # Install FFmpeg
 RUN apt install -y ffmpeg
@@ -47,5 +47,5 @@ EXPOSE 1935
 # Start Nginx
 RUN /usr/local/nginx/sbin/nginx
 
-# Start a bash shell
-CMD ["python3", "main.py"]
+# Start the Python application and Nginx server
+CMD ["sh", "-c", "/usr/local/nginx/sbin/nginx && python main.py"]

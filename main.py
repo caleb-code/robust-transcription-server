@@ -154,9 +154,9 @@ async def main():
             audio_queue,
             f"worker_{i}",
             target_languages,
-            model_size="tiny",
-            device="cpu",
-            compute_type="int8",
+            model_size="large-v3",
+            device="cuda",
+            compute_type="float16",
         )
         for i in range(3)
     ]
