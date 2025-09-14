@@ -1,4 +1,4 @@
-FROM nvidia/cuda:13.0.1-cudnn-runtime-ubuntu24.04
+FROM pytorch/pytorch:2.8.0-cuda12.9-cudnn9-devel
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
         python3 \
