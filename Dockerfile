@@ -41,17 +41,19 @@ RUN cd nginx-1.28.0 && ./configure --with-http_ssl_module --add-module=../nginx-
 
 COPY nginx.conf /usr/local/nginx/conf/nginx.conf
 
-# Add NVIDIA apt repo
-RUN apt-get update && apt-get install -y wget gnupg \
-    && wget -qO - https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2404/x86_64/3bf863cc.pub | apt-key add - \
-    && echo "deb https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2404/x86_64/ /" > /etc/apt/sources.list.d/cuda.list
+# Set cuDNN version for CUDA 12.9
+ENV CUDNN_VERSION=9.3.2.105
 
-# Install cuDNN
-RUN apt-get update && apt-get install -y --no-install-recommends \
-        libcudnn9=9.* \
-        libcudnn9-dev=9.* \
-    && rm -rf /var/lib/apt/lists/*
+# Download cuDNN for Linux x86_64 CUDA 12.9
+RUN wget https://developer.download.nvidia.com/compute/redist/cudnn/v9.3.2/cudnn-local-repo-ubuntu2404-9.3.2.105_1.0-1_amd64.deb \
+    && dpkg -i cudnn-local-repo-ubuntu2404-9.3.2.105_1.0-1_amd64.deb \
+    && apt-key add /var/cudnn-local-repo-*/7fa2af80.pub \
+    && apt-get update \
+    && apt-get install -y --no-install-recommends libcudnn9 libcudnn9-dev \
+    && rm -rf /var/lib/apt/lists/* cudnn-local-repo-ubuntu2404-9.3.2.105_1.0-1_amd64.deb
 
+# Install s3fs to mount S3 bucket
+RUN apt update
 RUN apt install s3fs
 RUN echo "*******REMOVED*******:*******REMOVED*******" > /passwd_file
 RUN chmod 600 /passwd_file
