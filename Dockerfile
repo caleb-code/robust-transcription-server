@@ -47,11 +47,9 @@ RUN apt update && apt install -y s3fs
 RUN echo "*******REMOVED*******:*******REMOVED*******" > /passwd_file
 RUN chmod 600 /passwd_file
 RUN mkdir /configs
-# Mount the S3 bucket (replace 'your-bucket-name' with your actual bucket name
-RUN s3fs configs-transcription /configs -o passwd_file=/passwd_file
 
 # Expose the RTMP port
 EXPOSE 1935
 
 # Start the Python application and Nginx server
-CMD ["sh", "-c", "/usr/local/nginx/sbin/nginx && python main.py"]
+CMD ["sh", "-c", "/usr/local/nginx/sbin/nginx && python main.py && s3fs configs-transcription /configs -o passwd_file=/passwd_file"]
