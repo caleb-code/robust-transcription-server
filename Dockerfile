@@ -44,7 +44,7 @@ COPY nginx.conf /usr/local/nginx/conf/nginx.conf
 
 # Install s3fs to mount S3 bucket
 RUN apt update
-RUN apt install s3fs
+RUN apt install s3fs -y
 RUN echo "*******REMOVED*******:*******REMOVED*******" > /passwd_file
 RUN chmod 600 /passwd_file
 RUN mkdir /configs
