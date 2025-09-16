@@ -1,55 +1,67 @@
-FROM pytorch/pytorch:2.8.0-cuda12.9-cudnn9-runtime
+# syntax=docker/dockerfile:1.5  # Enables BuildKit features
+FROM nvidia/cuda:12.9.1-cudnn-runtime-ubuntu24.04 AS base
 
+ENV PYTHONUNBUFFERED=1 \
+    PYTHONDONTWRITEBYTECODE=1 \
+    PIP_NO_CACHE_DIR=off
+
+# ------------------------
+# Stage 1: Install system deps and Python
+# ------------------------
 RUN apt-get update && apt-get install -y --no-install-recommends \
         python3 \
-        python3-dev \
         python3-venv \
         python3-pip \
-        python3-setuptools \
-        python3-wheel \
         build-essential \
+        libpcre3 libpcre3-dev \
+        zlib1g zlib1g-dev \
+        libssl-dev \
+        wget \
+        unzip \
+        ffmpeg \
+        ca-certificates \
     && rm -rf /var/lib/apt/lists/*
 
-RUN apt update
-RUN apt install -y build-essential libpcre3 libpcre3-dev zlib1g zlib1g-dev libssl-dev wget
-
-RUN python3 -m pip install --upgrade pip
-
+# Set working directory
 WORKDIR /
 
+# ------------------------
+# Stage 2: Install Python dependencies
+# ------------------------
+# Copy only requirements.txt first to leverage cache
+COPY requirements.txt .
+
+RUN pip install --break-system-packages -r requirements.txt
+
+# Pre-download faster_whisper model
+RUN python3 -c "from faster_whisper import download_model; download_model('turbo')"
+
+# ------------------------
+# Stage 3: Copy application code
+# ------------------------
 COPY . .
 
-RUN pip install -r requirements.txt
+# ------------------------
+# Stage 4: Compile Nginx with RTMP module
+# ------------------------
+RUN wget http://nginx.org/download/nginx-1.28.0.tar.gz \
+    && tar -xzf nginx-1.28.0.tar.gz \
+    && wget https://github.com/arut/nginx-rtmp-module/archive/refs/heads/master.zip \
+    && unzip master.zip \
+    && cd nginx-1.28.0 \
+    && ./configure --with-http_ssl_module --add-module=../nginx-rtmp-module-master \
+    && make -j$(nproc) \
+    && make install \
+    && cd /
 
-RUN python -c "from faster_whisper import download_model; download_model('large-v3')"
-
-# Install FFmpeg
-RUN apt install -y ffmpeg
-
-# Download and extract Nginx
-RUN wget http://nginx.org/download/nginx-1.28.0.tar.gz
-RUN tar -xzvf nginx-1.28.0.tar.gz
-RUN cd nginx-1.28.0
-
-# Download the nginx-rtmp-module
-RUN wget https://github.com/arut/nginx-rtmp-module/archive/refs/heads/master.zip
-RUN apt install -y unzip
-RUN unzip master.zip
-
-# Compile and install Nginx with the RTMP module
-RUN cd nginx-1.28.0 && ./configure --with-http_ssl_module --add-module=../nginx-rtmp-module-master && make && make install
-
+# Copy custom nginx configuration
 COPY nginx.conf /usr/local/nginx/conf/nginx.conf
 
-
-# Install s3fs to mount S3 bucket
-RUN apt update && apt install -y s3fs
-RUN echo "*******REMOVED*******:*******REMOVED*******" > /passwd_file
-RUN chmod 600 /passwd_file
-RUN mkdir /configs
-
-# Expose the RTMP port
+# Expose RTMP port
 EXPOSE 1935
 
-# Start the Python application and Nginx server
-CMD ["sh", "-c", "/usr/local/nginx/sbin/nginx && python main.py && s3fs configs-transcription /configs -o passwd_file=/passwd_file"]
+# ------------------------
+# Stage 6: Entry point
+# ------------------------
+# start bash
+CMD sh -c "/usr/local/nginx/sbin/nginx && python3 main.py"

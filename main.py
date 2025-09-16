@@ -1,14 +1,15 @@
 from faster_whisper import WhisperModel
 import numpy as np
 import asyncio
-from quart import Quart, request, jsonify
-import time
-import os
+from quart import Quart, request
 import requests
 import boto3
 import json
+import s3fs
 
 app = Quart(__name__)
+
+fs = s3fs.S3FileSystem(anon=False, key="*******REMOVED*******", secret="*******REMOVED*******")
 
 translate_client = boto3.client(
     "translate",
@@ -20,10 +21,11 @@ translate_client = boto3.client(
 
 def create_target_languages():
     target_languages = {}
-    for i in os.listdir("configs"):
+    for i in fs.ls("configs-transcription"):
         if i.endswith(".json"):
-            id = i.split(".json")[0]
-            with open(f"configs/{i}", "r", encoding="utf-8") as f:
+            id = i.split("/")[1].split(".json")[0]
+            print(id)
+            with fs.open(i) as f:
                 langs = json.load(f)
                 target_languages[id] = langs
     return target_languages
@@ -55,7 +57,7 @@ class GPUWorker:
         name,
         target_languages,
         device="cuda",
-        model_size="large-v3",
+        model_size="turbo",
         compute_type="float16",
     ):
         self.model = WhisperModel(model_size, device=device, compute_type=compute_type)
@@ -154,7 +156,7 @@ async def main():
             audio_queue,
             f"worker_{i}",
             target_languages,
-            model_size="large-v3",
+            model_size="turbo",
             device="cuda",
             compute_type="float16",
         )
