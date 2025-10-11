@@ -1,5 +1,5 @@
 # syntax=docker/dockerfile:1.5  # Enables BuildKit features
-FROM ubuntu24.04 AS base
+FROM ubuntu24.04:sha256-1245e1b09134c921e8f83b222683515278a33bd55a4d7d893d2c01dbdeb844b8 AS base
 
 ENV PYTHONUNBUFFERED=1 \
     PYTHONDONTWRITEBYTECODE=1 \
