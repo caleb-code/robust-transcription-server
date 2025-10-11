@@ -1,5 +1,5 @@
 # syntax=docker/dockerfile:1.5  # Enables BuildKit features
-FROM nvidia/cuda:12.9.1-cudnn-runtime-ubuntu24.04 AS base
+FROM ubuntu24.04 AS base
 
 ENV PYTHONUNBUFFERED=1 \
     PYTHONDONTWRITEBYTECODE=1 \
@@ -36,7 +36,7 @@ COPY requirements.txt .
 RUN pip install --break-system-packages -r requirements.txt
 
 # Pre-download faster_whisper model
-RUN python3 -c "from faster_whisper import download_model; download_model('turbo')"
+RUN python3 -c "from faster_whisper import download_model; download_model('tiny')"
 
 # ------------------------
 # Stage 3: Copy application code

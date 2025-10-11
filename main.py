@@ -6,16 +6,20 @@ import requests
 import boto3
 import json
 import s3fs
+import os
 
 app = Quart(__name__)
 
-fs = s3fs.S3FileSystem(anon=False, key="*******REMOVED*******", secret="*******REMOVED*******")
+aws_key = os.getenv("AWS_KEY_ID")
+aws_secret = os.getenv("AWS_SECRET_KEY")
+
+fs = s3fs.S3FileSystem(anon=False, key=aws_key, secret=aws_secret)
 
 translate_client = boto3.client(
     "translate",
     region_name="us-west-2",
-    aws_access_key_id="*******REMOVED*******",
-    aws_secret_access_key="*******REMOVED*******",
+    aws_access_key_id=aws_key,
+    aws_secret_access_key=aws_secret,
 )
 
 
