@@ -148,7 +148,7 @@ async def on_publish():
     audio_queue = app.config.get("audio_queue")
 
     asyncio.create_task(producer(audio_queue, stream_url=stream_url, id=stream_url))
-
+    print("recieved stream")
     return "Stream started", 200
 
 
@@ -160,11 +160,11 @@ async def main():
             audio_queue,
             f"worker_{i}",
             target_languages,
-            model_size="turbo",
-            device="cuda",
-            compute_type="float16",
+            model_size="tiny",
+            device="cpu",
+            compute_type="int8",
         )
-        for i in range(3)
+        for i in range(1)
     ]
     for w in workers:
         asyncio.create_task(w.run())

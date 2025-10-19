@@ -1,11 +1,14 @@
 # syntax=docker/dockerfile:1.5  # Enables BuildKit features
 FROM ubuntu AS base
 
+ARG AWS_KEY_ID
+ARG AWS_SECRET_KEY
+
 ENV PYTHONUNBUFFERED=1 \
     PYTHONDONTWRITEBYTECODE=1 \
     PIP_NO_CACHE_DIR=off \
-    AWS_KEY_ID=*******REMOVED******* \
-    AWS_SECRET_KEY=*******REMOVED*******
+    AWS_KEY_ID=$AWS_KEY_ID \
+    AWS_SECRET_KEY=$AWS_SECRET_KEY
 
 # ------------------------
 # Stage 1: Install system deps and Python
