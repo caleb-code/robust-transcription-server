@@ -10,9 +10,7 @@ One Word Many Tongues is easy to integrate into existing AV setups.
 ### **ARM64 (Raspberry Pi 5)**
 ![Architecture Diagram](https://onewordmanytongues.com/static/raspberrypi.png)
 \
-The lightweight Docker container for the Raspberry Pi 5 is built on [Ubuntu 24.04](https://hub.docker.com/_/Ubuntu). Setup is simple, just connect the Raspberry Pi with the appropiate Docker container to the same network as your streaming computer. 
-
-Running this system is easy, just point an RTMP stream to the Raspberry Pi and it will begin to transcribe text in realtime.
+The lightweight Docker container for the Raspberry Pi 5 is built on [Ubuntu 24.04](https://hub.docker.com/_/Ubuntu). Setup is simple, just connect the Raspberry Pi with the appropiate Docker container to the same network as your streaming computer. Once the Raspberry Pi is connected just point an RTMP stream to the Raspberry Pi and it will begin to transcribe text in realtime.
 
 #### Pros
 ✅ Easy to setup\
@@ -22,7 +20,7 @@ Running this system is easy, just point an RTMP stream to the Raspberry Pi and i
 #### Cons
 ❌ Expensive setup cost ($100 CAD for Raspberry Pi)\
 ❌ Smaller transcription due to processing limitations\
-❌ Harder to troubleshoot problems while deployed\
+❌ Harder to troubleshoot problems while deployed
 
 ### **CUDA (Cloud based GPU)**
 ![Cloud Architecture Diagram](https://onewordmanytongues.com/static/cloud.png)
@@ -37,7 +35,7 @@ To use this system simply send an RTMP stream to the server and the server will 
 ✅ Lower setup cost, only pay for using the system.\
 ✅ Highest possible transcription quality.\
 ✅ Easy to debug errors.\
-✅ Cost can be distributed over multiple clients\
+✅ Cost can be distributed over multiple clients
 #### Cons
 ❌ Higher recurring costs\
 ❌ Less secure, audio does leave the local network\
