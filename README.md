@@ -8,7 +8,8 @@ A deployable Docker container to transcribe and translate a live RTMP stream.
 One Word Many Tongues is easy to integrate into existing AV setups.
 
 ### **ARM64 (Raspberry Pi 5)**
-![Architecture Diagram](https://onewordmanytongues.com/static/raspberrypi.png)
+<img width="1488" height="947" alt="68747470733a2f2f6f6e65776f72646d616e79746f6e677565732e636f6d2f7374617469632f72617370626572727970692e706e67 (1)" src="https://github.com/user-attachments/assets/5cc7e159-79b8-4723-b0b1-272b1362f9f5" />
+
 \
 The lightweight Docker container for the Raspberry Pi 5 is built on [Ubuntu 24.04](https://hub.docker.com/_/Ubuntu). Setup is simple, just connect the Raspberry Pi with the appropiate Docker container to the same network as your streaming computer. Once the Raspberry Pi is connected just point an RTMP stream to the Raspberry Pi and it will begin to transcribe text in realtime.
 
@@ -23,7 +24,8 @@ The lightweight Docker container for the Raspberry Pi 5 is built on [Ubuntu 24.0
 ❌ Harder to troubleshoot problems while deployed
 
 ### **CUDA (Cloud based GPU)**
-![Cloud Architecture Diagram](https://onewordmanytongues.com/static/cloud.png)
+<img width="1738" height="1022" alt="image (1)" src="https://github.com/user-attachments/assets/b8c332a2-ea8e-404f-900b-eb2c97062125" />
+
 \
 The robust server based translation Docker container is built on [nvidia's CUDA docker container](https://hub.docker.com/r/nvidia/cuda). This system allows for multiple streams from multiple locations. It can recieve multiple streams and use parallelized GPU workers to transcribe and translate the text whilst simaltaneously pushing the text to https://onewordmanytongues.com.
 
